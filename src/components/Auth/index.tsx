@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { createStyles } from "antd-style";
 
 import * as s from "./style.module.scss";
-import { redirect } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
+import API from "../../services/api";
 const useStyle = createStyles(({ prefixCls, css }) => ({
   linearGradientButton: css`
     &.${prefixCls}-btn-primary:not([disabled]):not(
@@ -38,55 +39,49 @@ const Auth = () => {
   const { styles } = useStyle();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const apiTest = async () => {
-    console.log("called");
 
-    await fetch("/api", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ login: "test__user", password: "qwezxc" }),
-    }).then(async (res) => {
-      if (res) {
-        let result = await res.json();
-        if (result?.result?.token) {
-          localStorage.setItem("token", result?.result?.token);
-        }
-      }
-    });
+  const navigate = useNavigate();
+
+  const auth = async () => {
+    let response = await API.Auth(username, password);
+
+    if (response) navigate("/", { replace: true });
   };
 
-
+  useEffect(() => {
+    if (API.isAuthorized()) return navigate("/", { replace: true });
+  }, []);
 
   return (
     <div className={s.container}>
-      <Input
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Enter your username"
-        prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
-      />
-      <Input.Password
-        placeholder="input password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <ConfigProvider
-        button={{
-          className: styles.linearGradientButton,
-        }}
-      >
-        <Button
-          onClick={apiTest}
-          disabled={username.length === 0 || password.length === 0}
-          type="primary"
-          size="large"
-          icon={<AntDesignOutlined />}
+      <div className={s.wrap}>
+        <Input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter your username"
+          prefix={<UserOutlined style={{ color: "rgba(0,0,0,.25)" }} />}
+        />
+        <Input.Password
+          placeholder="input password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <ConfigProvider
+          button={{
+            className: styles.linearGradientButton,
+          }}
         >
-          login
-        </Button>
-      </ConfigProvider>
+          <Button
+            onClick={auth}
+            disabled={username.length === 0 || password.length === 0}
+            type="primary"
+            size="large"
+            icon={<AntDesignOutlined />}
+          >
+            login
+          </Button>
+        </ConfigProvider>
+      </div>
     </div>
   );
 };

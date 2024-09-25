@@ -2,6 +2,7 @@
     width: 500px;
     height: auto;
     display: grid;
+    grid-template-columns: repeat(2, 1fr);
     place-items: center;
     row-gap: 20px;
     }

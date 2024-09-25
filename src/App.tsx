@@ -1,6 +1,6 @@
 import React from "react";
 import Auth from "./components/Auth";
-import "./global.css";
+import "./normalize.css";
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Info from "./components/Info";
 

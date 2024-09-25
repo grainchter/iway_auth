@@ -14,9 +14,9 @@ module.exports = {
     historyApiFallback: true,
     proxy: [
         {
-          context: ['/api'],
+          context: ['/api/auth'],
           target: 'https://transstage1.iwayex.com/transnextgen/v3/auth/login',
-          pathRewrite: { '^/api': '' },
+          pathRewrite: { '^/api/auth': '' },
           secure: true,
           changeOrigin: true,
         },

@@ -36,11 +36,32 @@ class API {
     return true;
   }
 
-  static Auth() {}
-
-  static getRequest(url: string, page: number) {
+  static Auth(login: string, password: string) {
     return new Promise((resolve, reject) => {
-      fetch(`${rootURL}/${url}?page=${page}`, {
+      fetch(`/api/auth`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ login, password }),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data?.result?.token)
+            localStorage.setItem("token", data?.result?.token);
+          return true
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  }
+
+  static getOrderTrips(page: number) {
+    return new Promise((resolve, reject) => {
+      fetch(`${rootURL}/v3/orders/trips?page=${page}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${this._token}`,
