@@ -15,11 +15,11 @@ const InfoDetail = () => {
 
   useEffect(() => {
     if (!API.isAuthorized()) return navigate("/login", { replace: true });
-  }, []);
+  }, [infoData]);
 
   return (
     <div className={s.container}>
-      <button onClick={() => navigate('/')}>back</button>
+      <p>{infoData?.destination_address}</p>
     </div>
   );
 };

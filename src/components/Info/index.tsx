@@ -62,7 +62,7 @@ const Info = () => {
         actions: (
           <button
             onClick={() => {
-              navigate(`/${item.uuid}`, { replace: true });
+              dispatch(setInfoState(item));
             }}
           >
             Подробнее
@@ -79,16 +79,14 @@ const Info = () => {
       if (data?.page_data?.total_items)
         setTotalItems(data?.page_data?.total_items);
       const formattedOrders = formatOrders(data.orders);
-      dispatch(setInfoState(formattedOrders));
       createTableSource(formattedOrders);
     }
   };
 
   useEffect(() => {
     if (!API.isAuthorized()) return navigate("/login", { replace: true });
-    if (!infoData.length) loadData(1);
-    else createTableSource(infoData);
-  }, [infoData]);
+    loadData(1);
+  }, []);
   return (
     <div className={s.container}>
       <Table

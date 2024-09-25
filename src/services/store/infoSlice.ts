@@ -27,18 +27,18 @@ interface IOrders {
 }
 
 interface InfoState {
-  orders: IOrders[];
+  orders: IOrders | {};
 }
 
 const initialState = {
-  orders: [],
+  orders: {},
 } satisfies InfoState as InfoState;
 
 export const infoSlice = createSlice({
   name: "info",
   initialState,
   reducers: {
-    setInfoState: (state, action) => {  
+    setInfoState: (state, action) => {
       state.orders = action.payload;
     },
   },
