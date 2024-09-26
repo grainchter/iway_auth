@@ -77,9 +77,10 @@ class API {
 
   static getOrderTrips(page: number) {
     return new Promise((resolve, reject) => {
-      fetch(`${rootURL}/v3/orders/trips?page=${page}`, {
+      fetch(`/api/orders?page=${page}`, {
         method: "GET",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${this._token}`,
         },
       })

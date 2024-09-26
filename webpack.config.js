@@ -3,6 +3,13 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 const path = require("path");
 const webpack = require("webpack");
 
+function getQueryParamsFromUrl(url) {
+  const params = {};
+  url.replace(/([^?=&]+)(=([^&]*))?/g, ($0, $1, $2, $3) => {
+    params[$1] = $3;
+  });
+  return params;
+}
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -17,6 +24,13 @@ module.exports = {
           context: ['/api/auth'],
           target: 'https://transstage1.iwayex.com/transnextgen/v3/auth/login',
           pathRewrite: { '^/api/auth': '' },
+          secure: true,
+          changeOrigin: true,
+        },
+        {
+          context: ['/api/orders'],
+          target: 'https://transstage1.iwayex.com/transnextgen/v3/orders/trips',
+          pathRewrite: { '^/api/orders': '' },
           secure: true,
           changeOrigin: true,
         },
