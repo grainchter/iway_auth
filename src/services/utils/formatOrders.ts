@@ -8,3 +8,27 @@ export const formatOrders = (orders: any) => {
     uuid: order.uuid,
   }));
 };
+
+export const formatStatus = (status: number) => {
+  switch (status) {
+    case 0:
+      return "Ожидание обработки";
+    case 1:
+      return "Обработка";
+    case 2:
+      return "Принято";
+    case 3:
+      return "Завершённый";
+    case 4:
+      return "Отменено без штрафа";
+    case 5:
+      return "Отменено со штрафом";
+    case 6:
+      return "Неоплаченный";
+    case 7:
+      return "Измененный";
+
+    default:
+      return "Статус не найден";
+  }
+};

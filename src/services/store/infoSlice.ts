@@ -41,10 +41,13 @@ export const infoSlice = createSlice({
     setInfoState: (state, action) => {
       state.orders = action.payload;
     },
+    clearInfoState: (state) => {
+      state.orders = {}
+    }
   },
 });
 
-export const { setInfoState } = infoSlice.actions;
+export const { setInfoState, clearInfoState } = infoSlice.actions;
 
 export const getInfo = (state: RootState) => state.info.orders;
 

@@ -26,13 +26,32 @@ class API {
   _token = null;
   static _token: string | null;
 
+  static setCookie(token: string) {
+    let expires = "";
+    let date = new Date();
+    date.setTime(date.getTime() + 1 * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+    document.cookie = "token=" + token + "; path=/";
+  }
+
+  static getCookie() {
+    let nameEQ = "token=";
+    let ca = document.cookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == " ") c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
   static init() {
-    if (API.isAuthorized()) {
-      API._token = localStorage.getItem("token");
+    if (API.getCookie()) {      
+      API._token = API.getCookie();
     }
   }
   static isAuthorized() {
-    if (!localStorage.getItem("token")) return false;
+    if (!API.getCookie()) return false;
     return true;
   }
 
@@ -49,9 +68,11 @@ class API {
           return response.json();
         })
         .then((data) => {
-          if (data?.result?.token)
-            localStorage.setItem("token", data?.result?.token);
-          return true
+          if (data?.result?.token) {
+            API.setCookie(data.result.token);
+            API.init()
+            resolve(true);
+          }
         })
         .catch((e) => {
           reject(e);

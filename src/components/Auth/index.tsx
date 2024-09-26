@@ -44,7 +44,8 @@ const Auth = () => {
 
   const auth = async () => {
     let response = await API.Auth(username, password);
-
+    console.log(response);
+    
     if (response) navigate("/", { replace: true });
   };
 
