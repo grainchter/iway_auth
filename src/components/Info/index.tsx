@@ -8,12 +8,12 @@ import { useAppDispatch } from "../../services/store/hooks";
 import { formatOrders, formatStatus } from "../../services/utils/formatOrders";
 import InfoDetail from "../InfoDetail";
 import useWindowDimensions from "../../services/hooks/useWindowDimensions";
-import { generateRandomKey } from "../../services/utils/utils";
 
 interface DataType {
   status: string;
   date: string;
-  driverData: string;
+  customerName: string;
+  customerEmail: string;
   actions: ReactNode;
 }
 
@@ -25,7 +25,7 @@ const Info = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
-  const [selectedItem, setSelectedItem] = useState('')
+  const [selectedItem, setSelectedItem] = useState("");
   const [orders, serOrders] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalItems] = useState<number>(1);
@@ -43,9 +43,16 @@ const Info = () => {
       key: "date",
     },
     {
-      title: "Водитель",
-      dataIndex: "driverData",
-      key: "driverData",
+      title: "Имя пассажира",
+      dataIndex: "customerName",
+      key: "customerName",
+      sorter: (a, b) => a.customerName.localeCompare(b.customerName)
+    },
+    {
+      title: "Почта пассажира",
+      dataIndex: "customerEmail",
+      key: "customerEmail",
+      sorter: (a, b) => a.customerEmail.localeCompare(b.customerEmail)
     },
     {
       title: "Действия",
@@ -62,10 +69,11 @@ const Info = () => {
     let dataSource: any = [];
     orders.forEach((item: any) => {
       dataSource.push({
-        key: generateRandomKey(),
+        key: `${item.date}_${item.destination_address}`,
         date: item.date,
         destination_address: item.destination_address,
-        driverData: item.driver_data?.driver_name ?? "Без имени",
+        customerName: item.customer?.name ?? "Без имени",
+        customerEmail: item.customer?.email ?? "Без почты",
         status: formatStatus(item.status),
         actions: (
           <button
@@ -73,6 +81,7 @@ const Info = () => {
             onClick={() => {
               setIsSelected(true);
               dispatch(setInfoState(item));
+              setSelectedItem(`${item.date}_${item.destination_address}`);
             }}
           >
             Подробнее
@@ -97,6 +106,7 @@ const Info = () => {
   };
 
   const closeSelected = () => {
+    setSelectedItem('');
     setIsSelected(false);
   };
 
@@ -128,6 +138,9 @@ const Info = () => {
           {isLoading && <Spin size="large" />}
           {!isLoading && (
             <Table
+              rowClassName={(record, index) =>
+                record.key === selectedItem ? s.selectedRow : ""
+              }
               className={s.table}
               columns={columns}
               dataSource={orders}
