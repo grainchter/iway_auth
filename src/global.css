@@ -1,0 +1,6 @@
+.ant-input-outlined {
+    border-color: rgba(102, 46, 154, 0.726)!important;
+    outline: 0!important;
+    -webkit-box-shadow: 0 0 0 2px rgba(87,168,233, .2)!important;
+    box-shadow: 0 0 0 2px rgba(87,168,233, .2)!important;
+}

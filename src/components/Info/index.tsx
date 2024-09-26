@@ -1,17 +1,21 @@
-import { Input, Spin, Table, TableProps } from "antd";
-import { Button, ConfigProvider, Space } from "antd";
-import { UserOutlined, AntDesignOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import { createStyles } from "antd-style";
+import { Spin, Table, TableProps } from "antd";
+import { ReactNode, useEffect, useState } from "react";
 import * as s from "./index.module.scss";
 import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
-import { useDispatch, useSelector } from "react-redux";
-import { getInfo, setInfoState } from "../../services/store/infoSlice";
-import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
+import { setInfoState } from "../../services/store/infoSlice";
+import { useAppDispatch } from "../../services/store/hooks";
 import { formatOrders, formatStatus } from "../../services/utils/formatOrders";
 import InfoDetail from "../InfoDetail";
 import useWindowDimensions from "../../services/hooks/useWindowDimensions";
+import { generateRandomKey } from "../../services/utils/utils";
+
+interface DataType {
+  status: string;
+  date: string;
+  driverData: string;
+  actions: ReactNode;
+}
 
 const Info = () => {
   const dispatch = useAppDispatch();
@@ -21,6 +25,7 @@ const Info = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
+  const [selectedItem, setSelectedItem] = useState('')
   const [orders, serOrders] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalItems] = useState<number>(1);
@@ -28,22 +33,22 @@ const Info = () => {
 
   const columns: TableProps<DataType>["columns"] = [
     {
-      title: "status",
+      title: "Cтатус",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "date",
+      title: "Дата",
       dataIndex: "date",
       key: "date",
     },
     {
-      title: "driverData",
+      title: "Водитель",
       dataIndex: "driverData",
       key: "driverData",
     },
     {
-      title: "actions",
+      title: "Действия",
       dataIndex: "actions",
       key: "actions",
     },
@@ -53,23 +58,23 @@ const Info = () => {
     await loadData(e);
   };
 
-  const createTableSource = (orders) => {
+  const createTableSource = (orders: any) => {
     let dataSource: any = [];
-    orders.forEach((item) => {
+    orders.forEach((item: any) => {
       dataSource.push({
-        key: item.uuid,
+        key: generateRandomKey(),
         date: item.date,
         destination_address: item.destination_address,
         driverData: item.driver_data?.driver_name ?? "Без имени",
         status: formatStatus(item.status),
         actions: (
           <button
+            className={s.detail}
             onClick={() => {
               setIsSelected(true);
               dispatch(setInfoState(item));
             }}
           >
-            {/* <DoubleRightOutlined /> */}
             Подробнее
           </button>
         ),
@@ -79,10 +84,10 @@ const Info = () => {
     setIsLoading(false);
   };
 
-  const loadData = async (page) => {
+  const loadData = async (page: number) => {
     setCurrentPage(page);
     setIsLoading(true);
-    let data = await API.getOrderTrips(page);
+    let data: any = await API.getOrderTrips(page);
     if (data) {
       if (data?.page_data?.total_items)
         setTotalItems(data?.page_data?.total_items);
@@ -91,17 +96,17 @@ const Info = () => {
     }
   };
 
+  const closeSelected = () => {
+    setIsSelected(false);
+  };
+
   useEffect(() => {
     if (!API.isAuthorized()) return navigate("/login", { replace: true });
     loadData(currentPage);
   }, []);
 
-  console.log("isMobile", isMobile);
-
   useEffect(() => {
-    console.log("window", window.width);
-
-    if (window && window.width < 1000) {
+    if (window.width && window.width < 1000) {
       setIsMobile(true);
       return;
     }
@@ -136,7 +141,7 @@ const Info = () => {
             />
           )}
         </div>
-        {isSelected && <InfoDetail setIsSelected={setIsSelected}/>}
+        {isSelected && <InfoDetail closeSelected={closeSelected} />}
       </div>
     </div>
   );

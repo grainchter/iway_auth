@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
 
-// TODO check type by tz
 interface ICustomer {
   email: string | null | undefined;
   name: string | null | undefined;

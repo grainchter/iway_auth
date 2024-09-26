@@ -1,25 +1,25 @@
-import { Input, Table, TableProps } from "antd";
-import { Button, ConfigProvider, Space } from "antd";
-import { CloseOutlined, DoubleLeftOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import { createStyles } from "antd-style";
+import { useEffect } from "react";
 import * as s from "./index.module.scss";
 import { useNavigate } from "react-router-dom";
-import API, { getRequest } from "../../services/api";
+import API from "../../services/api";
 import { useAppDispatch, useAppSelector } from "../../services/store/hooks";
 import CONST from "../../services/utils/constants";
 import { clearInfoState } from "../../services/store/infoSlice";
 
-const InfoDetail = ({setIsSelected}) => {
+const InfoDetail = ({ closeSelected }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const infoData = useAppSelector((state) => state.info.orders);
-  console.log("INFO", infoData);
 
   const backEvent = () => {
     dispatch(clearInfoState());
-    setIsSelected(false)
+    closeSelected();
   };
+
+  useEffect(() => {
+    if (Object.keys(infoData).length === 0 && infoData.constructor === Object)
+      backEvent();
+  }, [infoData]);
 
   useEffect(() => {
     if (!API.isAuthorized()) return navigate("/login", { replace: true });
@@ -28,17 +28,21 @@ const InfoDetail = ({setIsSelected}) => {
   return (
     <div className={s.container}>
       <div className={s.action}>
-        <button onClick={backEvent}>Назад</button>
+        <button onClick={backEvent}></button>
       </div>
       <div className={s.wrap}>
         <div className={s.block}>
           <div className={s.title}>Дата</div>
-          <div className={s.desctiption}>{infoData?.date}</div>
+          <div className={s.desctiption}>
+            {infoData?.date ?? CONST.defaultEmptyDataMessage}
+          </div>
         </div>
         <div className={s.block}>
           <div className={s.title}>Статус</div>
           <div className={s.desctiption}>
-            <div className={s.desctiption}>{infoData?.status}</div>
+            <div className={s.desctiption}>
+              {infoData?.status ?? CONST.defaultEmptyDataMessage}
+            </div>
           </div>
         </div>
         <div className={s.block}>

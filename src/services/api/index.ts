@@ -1,9 +1,5 @@
 const rootURL = "https://transstage1.iwayex.com/transnextgen";
 
-export const isAuthorized = () => {};
-
-const Auth = () => {};
-
 export const getRequest = async (url: string, page: number) => {
   return new Promise((resolve, reject) => {
     fetch(`${rootURL}/${url}?page=${page}`, {
@@ -21,7 +17,6 @@ export const getRequest = async (url: string, page: number) => {
   });
 };
 
-// TODO rewrite localstorage to coockie
 class API {
   _token = null;
   static _token: string | null;
@@ -31,7 +26,7 @@ class API {
     let date = new Date();
     date.setTime(date.getTime() + 1 * 24 * 60 * 60 * 1000);
     expires = "; expires=" + date.toUTCString();
-    document.cookie = "token=" + token + "; path=/";
+    document.cookie = "token=" + token + expires + "; path=/";
   }
 
   static getCookie() {
