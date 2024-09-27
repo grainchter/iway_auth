@@ -1,22 +1,3 @@
-const rootURL = "https://transstage1.iwayex.com/transnextgen";
-
-export const getRequest = async (url: string, page: number) => {
-  return new Promise((resolve, reject) => {
-    fetch(`${rootURL}/${url}?page=${page}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        console.log(response);
-      });
-  });
-};
-
 class API {
   _token = null;
   static _token: string | null;
